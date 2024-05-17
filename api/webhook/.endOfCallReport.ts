@@ -1,5 +1,6 @@
 import { EndOfCallReportPayload } from "../../types/vapi.types";
 import { kv } from '@vercel/kv';
+import { aiSummarize } from "./openai";
 
 export const endOfCallReportHandler = async (
   payload?: EndOfCallReportPayload
@@ -19,6 +20,8 @@ export const endOfCallReportHandler = async (
     messages,
     timestamp: timestamp,
   });
+  const aiSummary = await aiSummarize(summary, transcript)
+  await kv.set(`order:${timestamp}`, { aiSummary});
 
   return;
 };
